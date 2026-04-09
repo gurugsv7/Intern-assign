@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { Settings, ChevronRight, Users, Lock, Sliders, History, User, Zap } from 'lucide-react';
+import React from 'react';
+import { Settings, ChevronRight, Users, Lock, Sliders, History, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { cn } from '@/lib/utils';
 import { motion } from 'motion/react';
 import { MOCK_USER, MOCK_SPENDING_DISTRIBUTION } from '@/src/lib/mockData';
 
 interface MeProps {
   onClose?: () => void;
   isModal?: boolean;
+  onOpenMockPage?: (page: string) => void;
 }
 
-export default function Me({ onClose, isModal = false }: MeProps) {
+export default function Me({ onClose, isModal = false, onOpenMockPage }: MeProps) {
   const spendingData = MOCK_SPENDING_DISTRIBUTION.map(item => ({
     label: item.name,
     amount: item.amount,
@@ -23,10 +23,10 @@ export default function Me({ onClose, isModal = false }: MeProps) {
   const spentPercentage = (totalSpent / totalBudget) * 100;
 
   const menuItems = [
-    { icon: <User className="h-5 w-5" />, label: 'My Account', description: 'View & edit profile' },
-    { icon: <History className="h-5 w-5" />, label: 'Transaction History', description: 'View all transactions' },
-    { icon: <Lock className="h-5 w-5" />, label: 'Security Settings', description: 'Manage security' },
-    { icon: <Sliders className="h-5 w-5" />, label: 'General Settings', description: 'Preferences & more' }
+    { icon: <User className="h-5 w-5" />, label: 'My Account', description: 'View & edit profile', page: 'account-profile' },
+    { icon: <History className="h-5 w-5" />, label: 'Transaction History', description: 'View all transactions', page: 'transaction-history' },
+    { icon: <Lock className="h-5 w-5" />, label: 'Security Settings', description: 'Manage security', page: 'security-settings' },
+    { icon: <Sliders className="h-5 w-5" />, label: 'General Settings', description: 'Preferences & more', page: 'general-settings' }
   ];
 
   return (
@@ -41,6 +41,7 @@ export default function Me({ onClose, isModal = false }: MeProps) {
             size="icon" 
             className="rounded-full hover:bg-emerald-50"
             aria-label="Settings"
+            onClick={() => onOpenMockPage?.('account-settings')}
           >
             <Settings className="h-5 w-5 text-primary" />
           </Button>
@@ -121,6 +122,7 @@ export default function Me({ onClose, isModal = false }: MeProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
+          onClick={() => onOpenMockPage?.('invite-friends')}
           className="w-full bg-gradient-to-br from-primary to-primary-container rounded-3xl p-6 text-left text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-[0.98]"
         >
           <div className="flex items-start justify-between">
@@ -142,6 +144,7 @@ export default function Me({ onClose, isModal = false }: MeProps) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + idx * 0.05 }}
+              onClick={() => onOpenMockPage?.(item.page)}
               className="w-full flex items-center gap-4 p-4 bg-white rounded-2xl border border-emerald-100/50 hover:bg-emerald-50/50 hover:border-emerald-200 transition-all active:scale-95"
             >
               <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-primary flex-shrink-0">
@@ -164,6 +167,7 @@ export default function Me({ onClose, isModal = false }: MeProps) {
             transition={{ delay: 0.5 }}
           >
             <Button 
+              onClick={() => onOpenMockPage?.('logout-flow')}
               className="w-full py-4 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 font-semibold rounded-2xl transition-all"
             >
               Logout

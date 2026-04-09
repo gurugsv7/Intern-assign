@@ -22,13 +22,15 @@ const Stats = lazy(() => import('./components/Stats'));
 const Wallet = lazy(() => import('./components/Wallet'));
 const Me = lazy(() => import('./components/Me'));
 const Onboarding = lazy(() => import('./components/Onboarding'));
+const MobileMockPage = lazy(() => import('./components/MobileMockPage'));
 
 export default function App() {
   const [activeTab, setActiveTab] = useLocalStorage<string>('active_tab', 'home');
   const [showAssistant, setShowAssistant] = useState(false);
-  const [showSendModal, setShowSendModal] = useState(false);
+  const [activeMockPage, setActiveMockPage] = useState<string | null>(null);
   const [completedOnboarding, setCompletedOnboarding] = useLocalStorage<boolean>('completed_onboarding', false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+  const desktopBootstrappedRef = useRef(false);
   const mainRef = useRef<HTMLElement>(null);
   const { trackEvent } = useAnalytics();
 
@@ -47,7 +49,28 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (isDesktop && !desktopBootstrappedRef.current) {
+      desktopBootstrappedRef.current = true;
+      if (activeTab !== 'home') {
+        setActiveTab('home');
+      }
+      return;
+    }
+
+    if (!isDesktop) {
+      desktopBootstrappedRef.current = false;
+    }
+  }, [isDesktop, activeTab, setActiveTab]);
+
+  useEffect(() => {
     const mobileTabs = ['home', 'stats', 'wallet', 'me'];
+    const desktopTabs = ['home', 'transactions', 'stats', 'insights', 'settings'];
+
+    if (isDesktop && !desktopTabs.includes(activeTab)) {
+      setActiveTab('home');
+      return;
+    }
+
     if (!isDesktop && !mobileTabs.includes(activeTab)) {
       setActiveTab('home');
     }
@@ -77,6 +100,22 @@ export default function App() {
     });
   }, [activeTab, isDesktop, trackEvent]);
 
+  const openMockPage = (page: string) => {
+    trackEvent('mobile_mock_open', {
+      page,
+      section: activeTab,
+    });
+    setActiveMockPage(page);
+  };
+
+  const closeMockPage = () => setActiveMockPage(null);
+
+  const handleMobileTabChange = (tab: string) => {
+    setActiveMockPage(null);
+    setShowAssistant(false);
+    setActiveTab(tab);
+  };
+
   const renderDesktopContent = () => {
     switch (activeTab) {
       case 'home': return <DesktopHome />;
@@ -84,19 +123,17 @@ export default function App() {
       case 'stats': return <DesktopSpending />;
       case 'insights': return <DesktopInsights />;
       case 'settings': return <DesktopSettings />;
-      case 'wallet': return <Wallet />;
-      case 'me': return <Me />;
       default: return <DesktopHome />;
     }
   };
 
   const renderMobileContent = () => {
     switch (activeTab) {
-      case 'home': return <Home onOpenSend={() => setShowSendModal(true)} />;
-      case 'stats': return <Stats />;
-      case 'wallet': return <Wallet />;
-      case 'me': return <Me />;
-      default: return <Home onOpenSend={() => setShowSendModal(true)} />;
+      case 'home': return <Home onOpenMockPage={openMockPage} />;
+      case 'stats': return <Stats onOpenMockPage={openMockPage} />;
+      case 'wallet': return <Wallet onOpenMockPage={openMockPage} />;
+      case 'me': return <Me onOpenMockPage={openMockPage} />;
+      default: return <Home onOpenMockPage={openMockPage} />;
     }
   };
 
@@ -132,7 +169,7 @@ export default function App() {
   // Mobile Layout
   return (
     <Suspense fallback={<PageFallback />}>
-      <Layout activeTab={activeTab} setActiveTab={setActiveTab} mainRef={mainRef}>
+      <Layout activeTab={activeTab} setActiveTab={handleMobileTabChange} mainRef={mainRef} onOpenMockPage={openMockPage}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -144,6 +181,8 @@ export default function App() {
             {renderMobileContent()}
           </motion.div>
         </AnimatePresence>
+
+        <MobileMockPage pageKey={activeMockPage} onClose={closeMockPage} />
 
         {/* Floating Action Button for AI Assistant */}
         <div className="fixed bottom-14 left-1/2 -translate-x-1/2 z-[70]">
@@ -234,43 +273,6 @@ export default function App() {
           )}
         </AnimatePresence>
 
-      {/* Send Money Modal */}
-        <AnimatePresence>
-          {showSendModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[80] flex items-end bg-on-surface/20 backdrop-blur-sm"
-              onClick={() => setShowSendModal(false)}
-            >
-              <motion.div
-                initial={{ y: 500 }}
-                animate={{ y: 0 }}
-                exit={{ y: 500 }}
-                transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                className="w-full bg-white rounded-t-[2.5rem] shadow-2xl overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-              >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-emerald-100/50">
-                <h2 className="text-lg font-bold text-on-surface">Send Money</h2>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowSendModal(false)}
-                  className="rounded-full"
-                  aria-label="Close send modal"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
-                <div className="overflow-y-auto max-h-[80vh]">
-                  <Me onClose={() => setShowSendModal(false)} isModal={true} />
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </Layout>
     </Suspense>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Menu, Home, PieChart, Wallet, User, Search } from 'lucide-react';
+import { Bell, Menu, Home, PieChart, Wallet, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { MOCK_USER } from '@/src/lib/mockData';
@@ -9,10 +9,11 @@ interface LayoutProps {
   children: React.ReactNode;
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  onOpenMockPage?: (page: string) => void;
   mainRef?: React.RefObject<HTMLElement>;
 }
 
-export default function Layout({ children, activeTab, setActiveTab, mainRef }: LayoutProps) {
+export default function Layout({ children, activeTab, setActiveTab, onOpenMockPage, mainRef }: LayoutProps) {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
@@ -24,6 +25,7 @@ export default function Layout({ children, activeTab, setActiveTab, mainRef }: L
             className="md:hidden"
             aria-label="Menu"
             aria-expanded="false"
+            onClick={() => onOpenMockPage?.('menu-hub')}
           >
             <Menu className="h-5 w-5 text-primary" aria-hidden="true" />
           </Button>
@@ -41,16 +43,23 @@ export default function Layout({ children, activeTab, setActiveTab, mainRef }: L
             size="icon" 
             className="rounded-full hover:bg-emerald-50"
             aria-label="Notifications"
+            onClick={() => onOpenMockPage?.('notification-center')}
           >
             <Bell className="h-5 w-5 text-slate-500" aria-hidden="true" />
           </Button>
-          <Avatar 
-            className="h-9 w-9 ring-2 ring-emerald-50 shadow-sm cursor-pointer"
+          <button
+            type="button"
+            onClick={() => onOpenMockPage?.('account-profile')}
+            className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
             aria-label={`User profile: ${MOCK_USER.name}`}
           >
-            <AvatarImage src={MOCK_USER.avatar} alt={`${MOCK_USER.name}'s avatar`} />
-            <AvatarFallback>{MOCK_USER.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-          </Avatar>
+            <Avatar 
+              className="h-9 w-9 ring-2 ring-emerald-50 shadow-sm cursor-pointer"
+            >
+              <AvatarImage src={MOCK_USER.avatar} alt={`${MOCK_USER.name}'s avatar`} />
+              <AvatarFallback>{MOCK_USER.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+            </Avatar>
+          </button>
         </div>
       </header>
 

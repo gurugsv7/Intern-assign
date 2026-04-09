@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDownLeft, Scan, Send, ArrowLeftRight, Receipt, Smartphone, Grid, ChevronRight, MoreVertical, ArrowLeft } from 'lucide-react';
+import { ArrowDownLeft, Scan, Send, ArrowLeftRight, Receipt, Smartphone, Grid, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -8,10 +8,10 @@ import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
 interface HomeProps {
-  onOpenSend?: () => void;
+  onOpenMockPage?: (page: string) => void;
 }
 
-export default function Home({ onOpenSend }: HomeProps) {
+export default function Home({ onOpenMockPage }: HomeProps) {
   return (
     <div className="bg-white/50 min-h-screen text-on-surface">
       <div className="px-6 space-y-6 max-w-lg mx-auto">
@@ -25,22 +25,28 @@ export default function Home({ onOpenSend }: HomeProps) {
 
       {/* Primary Actions */}
       <section className="grid grid-cols-3 gap-3">
-        <ActionButton icon={<ArrowDownLeft className="h-5 w-5" />} label="Receive" />
-        <ActionButton icon={<Scan className="h-5 w-5" />} label="Scan" primary />
-        <ActionButton icon={<Send className="h-5 w-5" />} label="Send" onClick={onOpenSend} />
+        <ActionButton icon={<ArrowDownLeft className="h-5 w-5" />} label="Receive" onClick={() => onOpenMockPage?.('receive-money')} />
+        <ActionButton icon={<Scan className="h-5 w-5" />} label="Scan" primary onClick={() => onOpenMockPage?.('scan-and-pay')} />
+        <ActionButton icon={<Send className="h-5 w-5" />} label="Send" onClick={() => onOpenMockPage?.('send-money')} />
       </section>
 
       {/* Quick Services */}
       <section className="bg-surface-container-low/50 rounded-[32px] p-6 space-y-6">
         <div className="flex justify-between items-center px-1">
           <h2 className="text-xs font-extrabold text-on-surface uppercase tracking-widest">Quick Services</h2>
-          <Button variant="ghost" className="text-xs text-primary font-bold px-2 py-1 bg-emerald-50 rounded-lg h-auto">View All</Button>
+          <Button
+            variant="ghost"
+            onClick={() => onOpenMockPage?.('quick-services')}
+            className="text-xs text-primary font-bold px-2 py-1 bg-emerald-50 rounded-lg h-auto"
+          >
+            View All
+          </Button>
         </div>
         <div className="grid grid-cols-4 gap-4">
-          <ServiceItem icon={<ArrowLeftRight className="h-6 w-6" />} label="Transfer" />
-          <ServiceItem icon={<Receipt className="h-6 w-6" />} label="Bills" />
-          <ServiceItem icon={<Smartphone className="h-6 w-6" />} label="Data" />
-          <ServiceItem icon={<Grid className="h-6 w-6" />} label="More" />
+          <ServiceItem icon={<ArrowLeftRight className="h-6 w-6" />} label="Transfer" onClick={() => onOpenMockPage?.('transfer-hub')} />
+          <ServiceItem icon={<Receipt className="h-6 w-6" />} label="Bills" onClick={() => onOpenMockPage?.('bill-pay')} />
+          <ServiceItem icon={<Smartphone className="h-6 w-6" />} label="Data" onClick={() => onOpenMockPage?.('data-topup')} />
+          <ServiceItem icon={<Grid className="h-6 w-6" />} label="More" onClick={() => onOpenMockPage?.('service-marketplace')} />
         </div>
       </section>
 
@@ -83,13 +89,20 @@ export default function Home({ onOpenSend }: HomeProps) {
       <section className="space-y-4">
         <div className="flex justify-between items-center px-1">
           <h2 className="text-xs font-extrabold text-on-surface uppercase tracking-widest">Recent Activity</h2>
-          <Button variant="ghost" className="text-xs font-bold text-slate-400 hover:text-primary h-auto p-0">See All</Button>
+          <Button
+            variant="ghost"
+            onClick={() => onOpenMockPage?.('activity-timeline')}
+            className="text-xs font-bold text-slate-400 hover:text-primary h-auto p-0"
+          >
+            See All
+          </Button>
         </div>
         <div className="space-y-3">
           {MOCK_TRANSACTIONS.map((tx) => (
             <motion.div 
               key={tx.id}
               whileHover={{ scale: 1.01 }}
+              onClick={() => onOpenMockPage?.('transaction-detail')}
               className="flex items-center justify-between p-4 bg-white/60 border border-white rounded-[24px] shadow-sm hover:shadow-md hover:bg-white transition-all group cursor-pointer"
             >
               <div className="flex items-center gap-3">
@@ -142,14 +155,18 @@ function ActionButton({ icon, label, primary, onClick }: { icon: React.ReactNode
   );
 }
 
-function ServiceItem({ icon, label }: { icon: React.ReactNode, label: string }) {
+function ServiceItem({ icon, label, onClick }: { icon: React.ReactNode, label: string, onClick?: () => void }) {
   return (
-    <div className="flex flex-col items-center gap-3 hover:bg-white/80 p-3 rounded-2xl transition-all cursor-pointer group">
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full flex-col items-center gap-3 hover:bg-white/80 p-3 rounded-2xl transition-all cursor-pointer group active:scale-95"
+    >
       <div className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm group-hover:shadow text-slate-600 group-hover:text-emerald-600 transition-colors">
         {icon}
       </div>
       <span className="text-[11px] font-bold text-slate-700 uppercase tracking-tighter">{label}</span>
-    </div>
+    </button>
   );
 }
 

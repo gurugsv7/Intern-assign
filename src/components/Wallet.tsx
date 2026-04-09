@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { ArrowLeft, MoreHorizontal, FileText, ShieldCheck, LineChart, Database, ArrowUpRight, Sparkles, Send, Paperclip } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { FileText, ShieldCheck, LineChart, Database, ArrowUpRight, Sparkles, Send, Paperclip } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { getFinancialInsights, AIInsight } from '@/src/services/geminiService';
 import { MOCK_USER } from '@/src/lib/mockData';
@@ -10,9 +9,15 @@ import { cn } from '@/lib/utils';
 import { useFetch } from '@/src/hooks/useFetch';
 import { useAnalytics } from '@/src/hooks/useAnalytics';
 
-export default function Wallet() {
+interface WalletProps {
+  onOpenMockPage?: (page: string) => void;
+}
+
+export default function Wallet({ onOpenMockPage }: WalletProps) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<{ id: string; text: string; sender: 'user' | 'ai' }[]>([]);
+  const [isBotTyping, setIsBotTyping] = useState(false);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const { trackEvent } = useAnalytics();
   const {
     data: insightsData,
@@ -22,29 +27,38 @@ export default function Wallet() {
   } = useFetch<AIInsight[]>(() => getFinancialInsights());
   const insights = insightsData ?? [];
 
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [messages, isBotTyping]);
+
   const handleSendMessage = () => {
-    if (message.trim()) {
+    const prompt = message.trim();
+    if (prompt) {
       trackEvent('assistant_message_send', {
-        length: message.trim().length,
+        length: prompt.length,
         page: 'assistant',
       });
 
       const newMessage = {
         id: Date.now().toString(),
-        text: message,
+        text: prompt,
         sender: 'user' as const,
       };
-      setMessages([...messages, newMessage]);
+      setMessages((prev) => [...prev, newMessage]);
       setMessage('');
+      setIsBotTyping(true);
       
-      // Simulate AI response
+      // Simulate contextual AI response for demo interactions.
       setTimeout(() => {
-        setMessages(prev => [...prev, {
+        setMessages((prev) => [...prev, {
           id: (Date.now() + 1).toString(),
-          text: "I'm analyzing your financial data...",
+          text: createMockAssistantReply(prompt),
           sender: 'ai' as const,
         }]);
-      }, 500);
+        setIsBotTyping(false);
+      }, 750);
     }
   };
 
@@ -79,7 +93,10 @@ export default function Wallet() {
           {/* Bento Grid */}
           <div className="grid grid-cols-2 gap-4">
             {/* Main Insight Card */}
-            <button className="col-span-2 group relative overflow-hidden bg-white border border-emerald-900/10 rounded-4xl p-6 transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-emerald-900/5 text-left">
+            <button
+              onClick={() => onOpenMockPage?.('portfolio-report')}
+              className="col-span-2 group relative overflow-hidden bg-white border border-emerald-900/10 rounded-4xl p-6 transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-emerald-900/5 text-left"
+            >
               <div className="absolute -right-4 -top-4 w-32 h-32 pattern-dots opacity-40 group-hover:opacity-100 transition-opacity"></div>
               <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-3">
@@ -106,17 +123,22 @@ export default function Wallet() {
               icon={<ShieldCheck className="h-6 w-6" aria-hidden="true" />} 
               title="Emergency Fund" 
               description="Bespoke savings path for your safety net."
+              onClick={() => onOpenMockPage?.('emergency-plan')}
               ariaLabel="Suggestion: Emergency Fund - Get a bespoke savings path for your safety net"
             />
             <InsightCard 
               icon={<LineChart className="h-6 w-6" aria-hidden="true" />} 
               title="Reduce Spending" 
               description="Intelligent expense pruning & analysis."
+              onClick={() => onOpenMockPage?.('spending-optimizer')}
               ariaLabel="Suggestion: Reduce Spending - Get intelligent expense pruning and analysis"
             />
 
             {/* Growth Engine Card */}
-            <button className="col-span-2 group relative flex items-center justify-between bg-primary-container p-1 rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-primary/20 text-left overflow-hidden">
+            <button
+              onClick={() => onOpenMockPage?.('micro-investing')}
+              className="col-span-2 group relative flex items-center justify-between bg-primary-container p-1 rounded-full transition-all duration-500 hover:shadow-xl hover:shadow-primary/20 text-left overflow-hidden"
+            >
               <div className="flex items-center gap-4 pl-6">
                 <div className="bg-white/90 p-2 rounded-full group-hover:scale-110 transition-transform">
                   <Database className="h-5 w-5 text-primary" />
@@ -203,7 +225,11 @@ export default function Wallet() {
           {!loading && !error && insights.length > 0 && (
             <div className="space-y-3">
               {insights.slice(0, 3).map((insight) => (
-                <div key={insight.title} className="rounded-2xl border border-slate-200 bg-white p-4">
+                <button
+                  key={insight.title}
+                  onClick={() => onOpenMockPage?.('insight-drilldown')}
+                  className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-emerald-200 hover:shadow-sm transition-all"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-black text-slate-900">{insight.title}</p>
@@ -213,7 +239,7 @@ export default function Wallet() {
                       {insight.impact}
                     </span>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           )}
@@ -225,7 +251,7 @@ export default function Wallet() {
         <div className="max-w-2xl mx-auto space-y-4">
           {/* Messages Display */}
           {messages.length > 0 && (
-            <div className="space-y-3 mb-4 max-h-40 overflow-y-auto">
+            <div ref={messagesRef} className="space-y-3 mb-4 max-h-44 overflow-y-auto pr-1">
               {messages.map((msg) => (
                 <div key={msg.id} className={cn("flex", msg.sender === 'user' ? 'justify-end' : 'justify-start')}>
                   <div className={cn(
@@ -238,6 +264,13 @@ export default function Wallet() {
                   </div>
                 </div>
               ))}
+              {isBotTyping && (
+                <div className="flex justify-start">
+                  <div className="max-w-xs px-6 py-3 rounded-3xl text-sm font-medium bg-emerald-50 text-on-surface rounded-bl-none">
+                    Fiscal is drafting your strategy...
+                  </div>
+                </div>
+              )}
             </div>
           )}
           
@@ -247,7 +280,7 @@ export default function Wallet() {
               <Input 
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 className="w-full bg-surface-container-low/60 border border-emerald-900/10 rounded-full pl-8 pr-16 py-4 h-auto text-on-surface placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-primary/40 transition-all text-base font-medium" 
                 placeholder="Ask Fiscal anything..."
                 aria-label="Chat message input"
@@ -255,6 +288,7 @@ export default function Wallet() {
                 aria-multiline="false"
               />
               <button 
+                onClick={() => onOpenMockPage?.('attachment-center')}
                 className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded-full p-1"
                 aria-label="Attach file"
               >
@@ -275,19 +309,44 @@ export default function Wallet() {
   );
 }
 
+function createMockAssistantReply(prompt: string): string {
+  const text = prompt.toLowerCase();
+
+  if (text.includes('budget') || text.includes('spend') || text.includes('expense')) {
+    return 'You are spending 14% above your weekly baseline in dining and transport. Try a 7-day cap of $220; projected savings this month: about $310.';
+  }
+
+  if (text.includes('save') || text.includes('goal') || text.includes('emergency')) {
+    return 'Plan: Redirect 12% of every incoming payment into your safety wallet. At your current inflow, you can reach a 4-month emergency fund in roughly 5.5 months.';
+  }
+
+  if (text.includes('invest') || text.includes('stock') || text.includes('sip')) {
+    return 'Strategy: Start with a low-volatility mix and enable round-up investing. Suggested split: 55% index, 30% debt, 15% cash buffer with monthly rebalance.';
+  }
+
+  if (text.includes('debt') || text.includes('loan') || text.includes('emi')) {
+    return 'Recommendation: Use the avalanche method. Pay minimums on all EMIs, then add extra toward the highest-interest loan first. Estimated interest reduction: 9-13% annually.';
+  }
+
+  return 'I mapped your account trends and found three opportunities: optimize subscriptions, cap variable spends twice a week, and auto-save from every credit. Want the detailed action list?';
+}
+
 function InsightCard({ 
   icon, 
   title, 
   description,
+  onClick,
   ariaLabel
 }: { 
   icon: React.ReactNode
   title: string
   description: string
+  onClick?: () => void
   ariaLabel?: string
 }) {
   return (
     <button 
+      onClick={onClick}
       className="col-span-1 group relative bg-white border border-emerald-900/10 rounded-4xl p-6 transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-emerald-900/5 text-left flex flex-col justify-between min-h-[220px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       aria-label={ariaLabel || `${title}: ${description}`}
     >

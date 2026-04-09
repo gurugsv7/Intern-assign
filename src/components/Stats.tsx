@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Filter, ChevronDown, Sparkles, ArrowRight, Utensils, Ticket, Wallet, TrendingUp, Landmark, UserCheck } from 'lucide-react';
+import { Filter, ChevronDown, Sparkles, ArrowRight, TrendingUp, Landmark, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,7 +9,11 @@ import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { useAnalytics } from '@/src/hooks/useAnalytics';
 
-export default function Stats() {
+interface StatsProps {
+  onOpenMockPage?: (page: string) => void;
+}
+
+export default function Stats({ onOpenMockPage }: StatsProps) {
   const totalCapital = MOCK_SPENDING_DISTRIBUTION.reduce((acc, curr) => acc + curr.amount, 0);
   const { trackEvent } = useAnalytics();
 
@@ -19,7 +23,11 @@ export default function Stats() {
         {/* Section Title */}
         <div className="flex items-center justify-between">
           <h1 className="text-4xl font-black tracking-tight text-on-surface">Spending Analysis</h1>
-          <Button variant="outline" className="rounded-full bg-emerald-50 text-primary font-semibold text-sm tracking-tight border-emerald-100/50 h-auto py-1.5 px-4">
+          <Button
+            variant="outline"
+            onClick={() => onOpenMockPage?.('period-selector')}
+            className="rounded-full bg-emerald-50 text-primary font-semibold text-sm tracking-tight border-emerald-100/50 h-auto py-1.5 px-4"
+          >
             April 2026 <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
         </div>
@@ -79,7 +87,11 @@ export default function Stats() {
               <p className="text-sm text-slate-500 leading-relaxed max-w-md">
                 Your current yield is underperforming market averages by 2.4%. We've identified three high-yield alternatives tailored to your risk profile.
               </p>
-              <Button variant="link" className="text-sm font-bold text-primary p-0 h-auto flex items-center gap-1 group/btn">
+              <Button
+                variant="link"
+                onClick={() => onOpenMockPage?.('portfolio-options')}
+                className="text-sm font-bold text-primary p-0 h-auto flex items-center gap-1 group/btn"
+              >
                 Explore Portfolio Options
                 <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
               </Button>
@@ -97,7 +109,10 @@ export default function Stats() {
           </div>
           <Button
             variant="ghost"
-            onClick={() => trackEvent('filter_click', { page: 'spending', type: 'allocation_filter' })}
+            onClick={() => {
+              trackEvent('filter_click', { page: 'spending', type: 'allocation_filter' });
+              onOpenMockPage?.('allocation-filter');
+            }}
             className="flex items-center gap-1 text-xs font-bold text-slate-500 uppercase tracking-wider h-auto p-0"
           >
             <Filter className="h-4 w-4" /> Filter
@@ -134,7 +149,10 @@ export default function Stats() {
               <p className="text-[10px] text-slate-400 font-medium">Wealth Advisor • Online</p>
             </div>
           </div>
-          <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black text-xs rounded-full px-5 py-2 h-auto">
+          <Button
+            onClick={() => onOpenMockPage?.('advisor-chat')}
+            className="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black text-xs rounded-full px-5 py-2 h-auto"
+          >
             CHAT NOW
           </Button>
         </div>
