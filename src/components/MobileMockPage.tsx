@@ -3,12 +3,24 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft,
   MoreVertical,
+  MoreHorizontal,
+  Search,
+  Plus,
+  Zap,
+  Wifi,
+  Droplets,
+  Lightbulb,
+  Tv,
   CreditCard,
   ChevronDown,
   Delete,
   Camera,
   RefreshCcw,
   AlertTriangle,
+  Copy,
+  Share2,
+  Mail,
+  MessageCircle,
   Sparkles,
   Bell,
   Menu,
@@ -18,6 +30,8 @@ import {
   ReceiptText,
   Smartphone,
   Grid2x2,
+  Globe,
+  Landmark,
   ListChecks,
   BanknoteArrowDown,
   CalendarClock,
@@ -37,7 +51,6 @@ import {
   Gift,
   Send,
   House,
-  ChartNoAxesColumn,
   Wallet,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -159,6 +172,18 @@ function page(
 }
 
 export default function MobileMockPage({ pageKey, onClose }: MobileMockPageProps) {
+  if (pageKey === 'transfer-hub') {
+    return <TransfersDestination onClose={onClose} />;
+  }
+
+  if (pageKey === 'receive-money') {
+    return <ReceiveMoneyDestination onClose={onClose} />;
+  }
+
+  if (pageKey === 'bill-pay') {
+    return <BillsDestination onClose={onClose} />;
+  }
+
   if (pageKey === 'scan-and-pay') {
     return <ScanCameraDestination onClose={onClose} />;
   }
@@ -250,6 +275,609 @@ export default function MobileMockPage({ pageKey, onClose }: MobileMockPageProps
         </motion.div>
       </motion.section>
     </AnimatePresence>
+  );
+}
+
+function TransfersDestination({ onClose }: { onClose: () => void }) {
+  const transferOptions = [
+    {
+      id: 'internal',
+      title: 'Internal Transfer',
+      description: 'Move money instantly between your accounts.',
+      icon: <ArrowLeftRight className="h-5 w-5" />,
+    },
+    {
+      id: 'external',
+      title: 'External Transfer',
+      description: 'Send funds to other local bank accounts.',
+      icon: <Landmark className="h-5 w-5" />,
+    },
+    {
+      id: 'international',
+      title: 'International Transfer',
+      description: 'Global wire transfers with competitive rates.',
+      icon: <Globe className="h-5 w-5" />,
+    },
+  ];
+
+  const recipients = [
+    {
+      id: 'sarah',
+      name: 'Sarah J.',
+      image:
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuDn_KPxmZtmBOaLx6a8A7EpShyjpDQfpSPoPcSdecRs7l4OCMFw7toA_IAnJ66Vhdx2osXmH1t3HksE728MO70n98qbonEVQMNIEQVWGFO2fRvSM3hmFylTW0yBy5m2XsAmYTrd4WXiC7wvd2rbS_4Y2a0NRwNjRuImUlWxjdwwpt67CkwG3nwXzXA8C9LTM7Shv3vleDWszrYs3mlvkn0yzoOIpSmhrIchscWRCgm3J1qmiHC-H9KwkmhiW-t7Xm1C_M_4Rdo7ZPY',
+      online: true,
+    },
+    {
+      id: 'marcus',
+      name: 'Marcus V.',
+      image:
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuCevKCJH-ZC6xXaXQQK1jE055T6mjKGdtqSS4fUkYStwOV6Pd7bFc7taHzIGHG5MVYFehl1q-7CLrgYnJRKffuXt_yz_2Scc9HmeJ9M40p0rd_oBywL0F2VExf5GreKMbsSvNFWN_yjZQNQjiGE-RrBezcwaVQMWC4bucsRJXcBzoBkvQ-m5vYVCHMGF_h8p34qk2Bf7zsHsh9yhKJ-llwpnuYCl7qHdZYYeAqoHUKdUTntlTdQ4cE6OjiYN9fHgZIRnP6EWS4BO88',
+      online: false,
+    },
+    {
+      id: 'elena',
+      name: 'Elena R.',
+      image:
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuCQQrbu02HwfCzi7b5A57cA3cpQ28igj0Lwrjxb7PbmJcD577fupg6Cd0HZoKZyge3Ep4mIgR-FSLBWYfC81vO4pXrenaPAEr7p4nU_2QQsfGe7CLwgYrGdee26YjCuaLx39ULt3IiPWjIY5upr5NxlXmHuwkzzxRc0URaMcPKg8M-Q9K3AITnZIM5QQfjeapJ4f7wuQ8hXDjBwuVr1DSJh1dO59NlBWGG2qmRExSWJIB4tGV_MOOk84Rvky6ijZ3oBN3TVV56kIEI',
+      online: false,
+    },
+    {
+      id: 'julian',
+      name: 'Julian K.',
+      image:
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuC5tnukFmST60zGCkP1I7ol1f9ff640SJ08eWHvHAIOF0k18ZOYRFkCdmr_C1qKitBZx-4MNibL22hgO1cu08917_OC05Z0KzKsS4Ay4YgkWOM4V5Ip9XQTehiJ9Uv1KQ_Vpcr6_jjOyNKDrjAEcm7imbQGt8cketf2UoWyXoFTlEVKCKwqXkvUrRaSjSPlRevgo20gVDmzv2ACsBbNtQyQLmWZsdeCpU3j2PMQIVpw27VnS7RURlywI19fYfqHj7aHMQeR_VBQHXA',
+      online: false,
+    },
+    {
+      id: 'alice',
+      name: 'Alice M.',
+      initials: 'AM',
+      online: false,
+    },
+  ];
+
+  const recentTransfers = [
+    {
+      id: 'chase',
+      title: 'Chase Savings - *4920',
+      meta: 'Yesterday, 4:25 PM • Internal',
+      amount: '-$1,250.00',
+      status: 'Completed',
+      statusTone: 'success' as const,
+      icon: <Landmark className="h-5 w-5 text-primary" />,
+    },
+    {
+      id: 'marcus-transfer',
+      title: 'Marcus Vercetti',
+      meta: 'Oct 24, 2023 • External',
+      amount: '-$45.00',
+      status: 'Completed',
+      statusTone: 'success' as const,
+      icon: <Send className="h-5 w-5 text-primary" />,
+    },
+    {
+      id: 'elena-transfer',
+      title: 'Elena Rodriguez',
+      meta: 'Oct 22, 2023 • International',
+      amount: '-$3,500.00',
+      status: 'Processing',
+      statusTone: 'processing' as const,
+      icon: <Globe className="h-5 w-5 text-primary" />,
+    },
+    {
+      id: 'wealth-fund',
+      title: 'Wealth Fund Portfolio',
+      meta: 'Oct 20, 2023 • Internal',
+      amount: '-$500.00',
+      status: 'Completed',
+      statusTone: 'success' as const,
+      icon: <ArrowLeftRight className="h-5 w-5 text-primary" />,
+    },
+  ];
+
+  return (
+    <AnimatePresence>
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[95]"
+      >
+        <motion.div
+          initial={{ y: 24, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 24, opacity: 0 }}
+          transition={{ type: 'spring', damping: 26, stiffness: 260 }}
+          className="h-full overflow-y-auto bg-[#ececf2] text-on-surface"
+        >
+          <header className="sticky top-0 z-20 bg-white border-b border-zinc-200/70 h-16 px-6 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-zinc-50 transition-colors active:scale-95 duration-150"
+              aria-label="Back"
+            >
+              <ArrowLeft className="h-5 w-5 text-zinc-600" />
+            </button>
+
+            <span className="text-lg font-black tracking-tight text-emerald-700">GSV AI Finance</span>
+
+            <button
+              type="button"
+              aria-label="Notifications"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400"
+            >
+              <Bell className="h-5 w-5" />
+            </button>
+          </header>
+
+          <main className="max-w-md mx-auto px-6 pt-8 pb-32 space-y-8">
+            <section>
+              <h1 className="text-5xl font-black tracking-tight text-on-background mb-6">Transfers</h1>
+
+              <div className="space-y-4">
+                {transferOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    className="group w-full bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30 hover:border-primary-container transition-all text-left"
+                  >
+                    <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                      {option.icon}
+                    </div>
+                    <h2 className="font-black text-[2rem] tracking-tight text-on-surface mb-1">{option.title}</h2>
+                    <p className="text-[1.35rem] text-zinc-600 leading-snug">{option.description}</p>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-[2.25rem] font-black tracking-tight text-on-background">Frequent Recipients</h2>
+                <button className="text-primary text-[1.35rem] font-semibold">View All</button>
+              </div>
+
+              <div className="flex gap-6 overflow-x-auto py-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <button type="button" className="flex flex-col items-center gap-2 shrink-0 group">
+                  <div className="w-14 h-14 rounded-full border-2 border-dashed border-outline-variant flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
+                    <Plus className="h-6 w-6" />
+                  </div>
+                  <span className="text-[1.2rem] font-medium text-zinc-600">Add New</span>
+                </button>
+
+                {recipients.map((recipient) => (
+                  <button key={recipient.id} type="button" className="flex flex-col items-center gap-2 shrink-0 group">
+                    {recipient.image ? (
+                      <div className="relative">
+                        <img
+                          alt={recipient.name}
+                          className="w-14 h-14 rounded-full object-cover border-2 border-transparent group-hover:border-primary-container transition-all"
+                          src={recipient.image}
+                        />
+                        {recipient.online && (
+                          <div className="absolute bottom-0 right-0 w-4 h-4 bg-primary-container rounded-full border-2 border-white" />
+                        )}
+                      </div>
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-lg">
+                        {recipient.initials}
+                      </div>
+                    )}
+                    <span className="text-[1.2rem] font-medium text-zinc-600">{recipient.name}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-[2.25rem] font-black tracking-tight text-on-background">Recent Transfers</h2>
+                <div className="flex gap-2">
+                  <button className="px-3 py-1 bg-surface-container-high rounded-full text-[1.1rem] font-medium text-zinc-600">All</button>
+                  <button className="px-3 py-1 rounded-full text-[1.1rem] font-medium text-zinc-600 hover:bg-surface-container-high transition-colors">Pending</button>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
+                <div className="divide-y divide-zinc-100">
+                  {recentTransfers.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className="w-full p-4 flex items-center justify-between hover:bg-zinc-50 transition-colors text-left"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-10 h-10 bg-surface-container-low rounded-lg flex items-center justify-center text-primary shrink-0">
+                          {item.icon}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-black text-[2rem] tracking-tight text-on-surface truncate">{item.title}</p>
+                          <p className="text-[1.25rem] text-zinc-500 truncate">{item.meta}</p>
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <p className="font-black text-[2.1rem] tracking-tight text-on-surface">{item.amount}</p>
+                        <p
+                          className={cn(
+                            'text-[10px] uppercase tracking-wider font-black px-2 py-0.5 rounded inline-block',
+                            item.statusTone === 'success'
+                              ? 'text-emerald-600 bg-emerald-50'
+                              : 'text-amber-600 bg-amber-50'
+                          )}
+                        >
+                          {item.status}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </main>
+
+          <nav className="fixed bottom-0 w-full z-[96] bg-white/90 backdrop-blur-md border-t border-zinc-200/70 px-4 py-2.5 flex items-center justify-around shadow-[0_-6px_16px_rgba(0,0,0,0.06)]">
+            <ReceiveNavItem icon={<House className="h-5 w-5" />} label="Home" onClick={onClose} />
+            <ReceiveNavItem icon={<Wallet className="h-5 w-5" />} label="Receive" />
+
+            <div className="flex flex-col items-center justify-center rounded-xl px-3 py-1.5 bg-emerald-50 text-emerald-700">
+              <ArrowLeftRight className="h-5 w-5" />
+              <span className="text-[11px] font-medium tracking-wide">Transfer</span>
+            </div>
+
+            <ReceiveNavItem icon={<ReceiptText className="h-5 w-5" />} label="Bills" />
+            <ReceiveNavItem icon={<Grid2x2 className="h-5 w-5" />} label="Services" />
+          </nav>
+        </motion.div>
+      </motion.section>
+    </AnimatePresence>
+  );
+}
+
+function BillsDestination({ onClose }: { onClose: () => void }) {
+  const upcomingBills = [
+    {
+      id: 'electricity',
+      name: 'City Electric Co.',
+      account: '****9281',
+      amount: '$142.00',
+      dueText: 'DUE IN 2 DAYS',
+      dueTone: 'urgent' as const,
+      icon: <Zap className="h-5 w-5 text-blue-600" />,
+      iconBg: 'bg-blue-50',
+      autoPay: false,
+    },
+    {
+      id: 'internet',
+      name: 'Fiber Connect',
+      account: '****0042',
+      amount: '$85.00',
+      dueText: 'DUE MAY 18',
+      dueTone: 'neutral' as const,
+      icon: <Wifi className="h-5 w-5 text-emerald-600" />,
+      iconBg: 'bg-emerald-50',
+      autoPay: true,
+    },
+    {
+      id: 'water',
+      name: 'Aqua Municipal',
+      account: '****1155',
+      amount: '$48.20',
+      dueText: 'DUE MAY 22',
+      dueTone: 'neutral' as const,
+      icon: <Droplets className="h-5 w-5 text-orange-600" />,
+      iconBg: 'bg-orange-50',
+      autoPay: false,
+    },
+  ];
+
+  const categories = [
+    { name: 'Electricity', icon: <Lightbulb className="h-5 w-5 text-emerald-600" /> },
+    { name: 'Water', icon: <Droplets className="h-5 w-5 text-emerald-600" /> },
+    { name: 'Internet', icon: <Wifi className="h-5 w-5 text-emerald-600" /> },
+    { name: 'Mobile', icon: <Smartphone className="h-5 w-5 text-emerald-600" /> },
+    { name: 'TV & Cable', icon: <Tv className="h-5 w-5 text-emerald-600" /> },
+    { name: 'Others', icon: <MoreHorizontal className="h-5 w-5 text-emerald-600" /> },
+  ];
+
+  return (
+    <AnimatePresence>
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-x-0 top-0 bottom-24 z-[95]"
+      >
+        <motion.div
+          initial={{ y: 24, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 24, opacity: 0 }}
+          transition={{ type: 'spring', damping: 26, stiffness: 260 }}
+          className="h-full overflow-y-auto bg-[#ececf2] text-on-surface"
+        >
+          <header className="sticky top-0 z-20 bg-white border-b border-zinc-200/70 h-16 px-6 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-zinc-50 transition-colors active:scale-95 duration-150"
+              aria-label="Back"
+            >
+              <ArrowLeft className="h-5 w-5 text-zinc-600" />
+            </button>
+
+            <span className="text-lg font-black tracking-tight text-emerald-700">GSV AI Finance</span>
+
+            <button
+              type="button"
+              aria-label="Notifications"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400"
+            >
+              <Bell className="h-5 w-5" />
+            </button>
+          </header>
+
+          <main className="max-w-md mx-auto px-6 pt-8 pb-12 space-y-7">
+            <section className="bg-primary-container rounded-2xl p-7 text-on-primary-container shadow-[0_12px_24px_rgba(0,212,106,0.2)]">
+              <p className="text-xs font-black tracking-[0.18em] uppercase opacity-95 mb-2">Total Due This Month</p>
+              <p className="text-6xl font-black tracking-tight mb-6">$1,248.50</p>
+              <div className="grid grid-cols-2 gap-3">
+                <button className="h-12 rounded-xl bg-[#006d33] text-white text-[1.35rem] font-bold tracking-tight active:scale-95 transition-transform">
+                  Pay All Now
+                </button>
+                <button className="h-12 rounded-xl border border-[#0c9255] text-[#005526] bg-transparent text-[1.35rem] font-bold tracking-tight active:scale-95 transition-transform">
+                  View Report
+                </button>
+              </div>
+            </section>
+
+            <section className="rounded-2xl bg-surface-container-high p-7 border border-zinc-200/40">
+              <div className="flex items-center justify-between mb-5">
+                <p className="text-xs uppercase font-black tracking-[0.18em] text-slate-500">Auto-Pay Status</p>
+                <div className="w-11 h-6 rounded-full bg-primary relative">
+                  <div className="w-5 h-5 rounded-full bg-white absolute top-0.5 right-0.5" />
+                </div>
+              </div>
+              <p className="text-[1.35rem] leading-relaxed text-slate-600 mb-4">4 of your 6 recurring bills are currently set to automatic payment.</p>
+              <button className="text-primary text-[1.35rem] font-bold tracking-tight active:opacity-75 transition-opacity">Manage Rules -&gt;</button>
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-[2.25rem] font-black tracking-tight text-zinc-800">Upcoming Bills</h2>
+                <button className="text-primary text-[1.35rem] font-semibold">View Calendar</button>
+              </div>
+              <div className="space-y-4">
+                {upcomingBills.map((bill) => (
+                  <article key={bill.id} className="bg-white rounded-2xl p-6 border border-zinc-200/60 shadow-[0_2px_0_rgba(0,0,0,0.01)]">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className={cn('w-14 h-14 rounded-xl flex items-center justify-center', bill.iconBg)}>{bill.icon}</div>
+                      <span
+                        className={cn(
+                          'text-[10px] uppercase font-black tracking-[0.1em] px-2.5 py-1 rounded-full',
+                          bill.dueTone === 'urgent'
+                            ? 'text-red-600 bg-red-100'
+                            : 'text-zinc-400 bg-zinc-100'
+                        )}
+                      >
+                        {bill.dueText}
+                      </span>
+                    </div>
+
+                    <h3 className="text-[2rem] font-black text-zinc-800 leading-tight">{bill.name}</h3>
+                    <p className="text-[1.35rem] text-zinc-500 tracking-wide mb-5">Account: {bill.account}</p>
+
+                    <div className="flex items-end justify-between">
+                      <p className="text-5xl font-black tracking-tight text-zinc-900">{bill.amount}</p>
+                      {bill.autoPay ? (
+                        <div className="h-9 px-3 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-black tracking-wide uppercase flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-emerald-600" />
+                          Auto-pay
+                        </div>
+                      ) : (
+                        <button className="w-12 h-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center active:scale-95 transition-transform">
+                          <Wallet className="h-5 w-5" />
+                        </button>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between mb-4 gap-3">
+                <h2 className="text-[2.25rem] font-black tracking-tight text-zinc-800">Biller Categories</h2>
+                <label className="h-10 min-w-[150px] px-3 rounded-xl bg-white border border-zinc-200 flex items-center gap-2 text-zinc-400">
+                  <Search className="h-4 w-4" />
+                  <span className="text-[1.2rem]">Search billers...</span>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {categories.map((category) => (
+                  <button
+                    key={category.name}
+                    className="bg-white border border-zinc-200/70 rounded-2xl p-5 h-[120px] flex flex-col items-center justify-center gap-3 active:scale-[0.98] transition-transform"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center">{category.icon}</div>
+                    <span className="text-[1.25rem] font-bold text-zinc-700">{category.name}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          </main>
+
+          <div className="fixed right-6 bottom-24 z-[98]">
+            <button className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center shadow-[0_10px_24px_rgba(0,109,51,0.35)] active:scale-95 transition-transform">
+              <Plus className="h-7 w-7" />
+            </button>
+          </div>
+
+        </motion.div>
+      </motion.section>
+    </AnimatePresence>
+  );
+}
+
+function ReceiveMoneyDestination({ onClose }: { onClose: () => void }) {
+  return (
+    <AnimatePresence>
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-x-0 top-0 bottom-24 z-[95] bg-surface"
+      >
+        <motion.div
+          initial={{ y: 25, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 30, opacity: 0 }}
+          transition={{ type: 'spring', damping: 24, stiffness: 260 }}
+          className="h-full overflow-y-auto bg-[#eef0f7] text-on-surface"
+        >
+          <header className="sticky top-0 z-10 flex justify-between items-center px-6 h-16 w-full border-b border-zinc-100 bg-white">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-zinc-50 transition-colors active:scale-95 duration-150"
+              aria-label="Back"
+            >
+              <ArrowLeft className="h-5 w-5 text-zinc-600" />
+            </button>
+
+            <span className="text-lg font-black tracking-tight text-emerald-700">GSV AI Finance</span>
+
+            <button className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-zinc-50 transition-colors active:scale-95 duration-150" aria-label="Notifications">
+              <Bell className="h-5 w-5 text-zinc-400" />
+            </button>
+          </header>
+
+          <main className="max-w-md mx-auto px-6 pt-8 space-y-8 pb-12">
+            <section className="relative">
+              <div className="absolute inset-0 bg-primary-container/10 blur-3xl rounded-full -z-10 translate-y-8" />
+              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-zinc-100 flex flex-col items-center text-center space-y-6">
+                <div className="space-y-2">
+                  <h1 className="text-2xl font-bold text-on-background">Receive Money</h1>
+                  <p className="text-sm text-slate-500">Scan or share this code to get paid instantly</p>
+                </div>
+
+                <div className="relative p-6 bg-white rounded-3xl border-2 border-primary-container/20 shadow-inner">
+                  <div className="w-48 h-48 bg-gradient-to-br from-[#00D46A] to-[#17C95F] p-1 rounded-2xl">
+                    <div className="bg-white w-full h-full rounded-xl flex items-center justify-center p-2">
+                      <img
+                        alt="QR Code"
+                        className="w-full h-full opacity-90"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_FipVOar4k4OxGteaY23yk2dZajrsSwlbsQp_IfmGO4YU7Ku4KWTsP4mkMTG0VTNFOB5QrPuj4U03nbtqWwP74vlN99MSqyWyte9NiSXWLvR3r-_xFRepiDVDMi9D9gc7d4_Ur-akUb5dqvLS_IFmu8-7TaTReG_6ZZUBXaZuHG9UW_BT_593H6SlDjoNebKdKunIHswtHlFD6MnaLn6hzvBHb_espaAFPMPtH3jahJdeyQ89CXkUi7wp6Z90WXuVlKF1jlvxysY"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-on-surface text-white px-4 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">
+                    Secure ID: BR892X
+                  </div>
+                </div>
+
+                <div className="w-full pt-4">
+                  <div className="flex items-center justify-between bg-surface-container-low px-4 py-3 rounded-2xl border border-outline-variant/30">
+                    <span className="text-xs font-mono text-secondary truncate max-w-[200px]">bright.me/pay/alex_walker</span>
+                    <button className="flex items-center gap-2 text-primary font-bold text-xs hover:opacity-80 transition-opacity">
+                      <Copy className="h-4 w-4" />
+                      Copy Link
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-4">
+              <h2 className="text-sm font-bold text-secondary px-2 flex items-center gap-2">
+                <Share2 className="h-4 w-4" />
+                Share via Apps
+              </h2>
+
+              <div className="grid grid-cols-4 gap-4">
+                <ShareApp icon={<MessageCircle className="h-6 w-6 text-[#25D366]" />} label="WhatsApp" />
+                <ShareApp icon={<Send className="h-6 w-6 text-[#0088CC]" />} label="Telegram" />
+                <ShareApp icon={<Mail className="h-6 w-6 text-primary" />} label="Email" />
+                <ShareApp icon={<MoreHorizontal className="h-6 w-6 text-on-surface" />} label="More" />
+              </div>
+            </section>
+
+            <section className="space-y-4">
+              <div className="flex items-center justify-between px-2">
+                <h2 className="text-sm font-bold text-secondary">Recent Incoming</h2>
+                <button className="text-xs text-primary font-bold">View All</button>
+              </div>
+
+              <div className="space-y-3">
+                <IncomingItem
+                  name="Sarah Jenkins"
+                  time="Today, 2:45 PM"
+                  amount="+$450.00"
+                  image="https://lh3.googleusercontent.com/aida-public/AB6AXuD-JBK8IsLWPZd8kez5eG9rkAnfnNzvcpVT0zM8FX6L3hHrGb3AznI9DVeQEvrIcsTss71y_b5i9aBr6UOWa5ZRLLxM3RpU8o82gtxspX_UOl8Yz-eRfoXwhnJoZ-O719XSyngzQQ-146dX_mwUY1FO_erJ-tUyxttzRyuIEJw8y7K6aiAaXNKrZWHQXyU_LJBcmqJvcAPp_dolDdKICspXfu6M0aMt9IOiNb9DvB4AKoooxnblo_1JwynyFlVDuKmDgAcTe-cAQyE"
+                />
+                <IncomingItem
+                  name="Cloud Services Inc."
+                  time="Yesterday, 10:15 AM"
+                  amount="+$1,200.00"
+                  image="https://lh3.googleusercontent.com/aida-public/AB6AXuAclzFrdbQ3aSed34Lp_OZOXcx95Bq5hDukM4lpNgTqdUUQDgTV5gJZif6zFu328CYgQVDVy_cdRdurH2PDOuEAYaepdOTM2aIQR3gR6amlUXQWE6mURHUPDmxc6e4Q1JVs_yoVE-fzyFOTVQJfkLoIgN2RHGSZsTv712W1jsboTZaFPAJX28GeyJltbV6nFIXo63OvloByaY09aE-p6aAXhlgFRNAzW6iPyeQffzTwh8jQBLc3VoSKfRG_Gj0ASsYt3M6MHprI5sI"
+                />
+              </div>
+            </section>
+
+            <div className="flex items-center justify-center gap-2 py-4">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="text-[10px] font-medium text-secondary uppercase tracking-widest">End-to-End Encrypted Transfers</span>
+            </div>
+          </main>
+
+        </motion.div>
+      </motion.section>
+    </AnimatePresence>
+  );
+}
+
+function ShareApp({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <button className="flex flex-col items-center gap-2 group">
+      <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-zinc-100 flex items-center justify-center group-active:scale-95 transition-all">
+        {icon}
+      </div>
+      <span className="text-[10px] font-medium text-secondary">{label}</span>
+    </button>
+  );
+}
+
+function IncomingItem({ name, time, amount, image }: { name: string; time: string; amount: string; image: string }) {
+  return (
+    <div className="flex items-center gap-4 bg-white p-4 rounded-3xl border border-zinc-100 shadow-sm">
+      <div className="w-12 h-12 rounded-2xl bg-primary-container/10 flex items-center justify-center">
+        <img alt={name} className="w-8 h-8 rounded-full object-cover" src={image} />
+      </div>
+      <div className="flex-1">
+        <p className="text-sm font-bold text-on-background">{name}</p>
+        <p className="text-[10px] text-slate-500">{time}</p>
+      </div>
+      <div className="text-right">
+        <p className="text-sm font-black text-primary">{amount}</p>
+        <span className="text-[10px] px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-bold">Success</span>
+      </div>
+    </div>
+  );
+}
+
+function ReceiveNavItem({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick?: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex flex-col items-center justify-center text-zinc-500 px-3 py-1.5 hover:text-emerald-500 active:opacity-80 transition-all"
+    >
+      <span>{icon}</span>
+      <span className="text-[11px] font-medium tracking-wide">{label}</span>
+    </button>
   );
 }
 
@@ -515,7 +1143,7 @@ function SendMoneyDestination({ onClose }: { onClose: () => void }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[95]"
+        className="fixed inset-x-0 top-0 bottom-24 z-[95]"
       >
         <motion.div
           initial={{ y: 35, opacity: 0 }}
@@ -545,7 +1173,7 @@ function SendMoneyDestination({ onClose }: { onClose: () => void }) {
             </button>
           </header>
 
-          <main className="max-w-md mx-auto px-6 pt-7">
+          <main className="max-w-md mx-auto px-6 pt-7 pb-8">
             <section className="flex flex-col items-center justify-center mb-10">
               <div className="flex items-center">
                 <span className="text-on-background/45 text-4xl font-light mr-2">$</span>
@@ -593,7 +1221,7 @@ function SendMoneyDestination({ onClose }: { onClose: () => void }) {
               </button>
             </div>
 
-            <section className="pb-32">
+            <section className="pb-8">
               <div className="grid grid-cols-3 gap-y-4 text-center">
                 <KeyButton label="1" onPress={pressKey} />
                 <KeyButton label="2" onPress={pressKey} />
@@ -617,17 +1245,6 @@ function SendMoneyDestination({ onClose }: { onClose: () => void }) {
               </div>
             </section>
           </main>
-
-          <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-white/70 backdrop-blur-2xl z-[96] border-t border-emerald-900/5 rounded-t-[2rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
-            <BottomNavItem icon={<House className="h-6 w-6" />} label="HOME" />
-            <BottomNavItem icon={<ChartNoAxesColumn className="h-6 w-6" />} label="INSIGHTS" />
-            <div className="flex flex-col items-center justify-center bg-[#00D46A] text-[#002B14] rounded-full px-5 py-2 transition-all duration-500 ease-out">
-              <Wallet className="h-6 w-6 mb-1" />
-              <span className="text-[11px] font-medium tracking-wide uppercase">WALLET</span>
-            </div>
-            <BottomNavItem icon={<ReceiptText className="h-6 w-6" />} label="ACTIVITY" />
-            <BottomNavItem icon={<UserRound className="h-6 w-6" />} label="PROFILE" />
-          </nav>
         </motion.div>
       </motion.section>
     </AnimatePresence>
@@ -642,15 +1259,6 @@ function KeyButton({ label, onPress }: { label: string; onPress: (key: string) =
       className="py-4 text-2xl font-semibold text-on-surface active:bg-emerald-50 rounded-2xl transition-colors"
     >
       {label}
-    </button>
-  );
-}
-
-function BottomNavItem({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <button className="flex flex-col items-center justify-center text-emerald-900/60 px-5 py-2 hover:scale-110 transition-transform active:scale-95 duration-200">
-      <span className="mb-1">{icon}</span>
-      <span className="text-[11px] font-medium tracking-wide uppercase">{label}</span>
     </button>
   );
 }
