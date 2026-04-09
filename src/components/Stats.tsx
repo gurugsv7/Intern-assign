@@ -7,26 +7,28 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MOCK_SPENDING_DISTRIBUTION } from '@/src/lib/mockData';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
+import { useAnalytics } from '@/src/hooks/useAnalytics';
 
 export default function Stats() {
   const totalCapital = MOCK_SPENDING_DISTRIBUTION.reduce((acc, curr) => acc + curr.amount, 0);
+  const { trackEvent } = useAnalytics();
 
   return (
-    <div className="px-6 space-y-12 max-w-4xl mx-auto pb-12">
-      <header className="space-y-1 pt-4">
+    <div className="bg-white/50 min-h-screen text-on-surface">
+      <div className="px-6 space-y-12 max-w-4xl mx-auto mt-4">
+        {/* Section Title */}
         <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-black tracking-tight text-on-surface">Money Distribution</h1>
+          <h1 className="text-4xl font-black tracking-tight text-on-surface">Spending Analysis</h1>
           <Button variant="outline" className="rounded-full bg-emerald-50 text-primary font-semibold text-sm tracking-tight border-emerald-100/50 h-auto py-1.5 px-4">
-            May 2024 <ChevronDown className="ml-2 h-4 w-4" />
+            April 2026 <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
         </div>
-        <p className="text-slate-400 font-medium tracking-wide text-xs uppercase">Investment Report • Q2 Analysis</p>
-      </header>
+        <p className="text-slate-400 font-medium tracking-wide text-xs uppercase">Spending Report • April 2026</p>
 
-      {/* Donut Chart Section */}
-      <section className="flex flex-col md:flex-row items-center gap-12">
-        <div className="relative w-64 h-64 shrink-0">
-          <ResponsiveContainer width="100%" height="100%">
+        {/* Donut Chart Section */}
+        <section className="flex flex-col md:flex-row items-center gap-12">
+        <div className="relative w-64 h-64 flex-shrink-0" style={{ minWidth: 256, minHeight: 256 }}>
+          <ResponsiveContainer width={256} height={256}>
             <RePieChart>
               <Pie
                 data={MOCK_SPENDING_DISTRIBUTION}
@@ -91,16 +93,28 @@ export default function Stats() {
         <div className="flex items-end justify-between border-b border-slate-100 pb-4">
           <div>
             <h2 className="text-xl font-bold text-on-surface">Allocation Details</h2>
-            <p className="text-xs text-slate-400 font-medium">May 1 - May 31, 2024</p>
+            <p className="text-xs text-slate-400 font-medium">April 1 - April 30, 2026</p>
           </div>
-          <Button variant="ghost" className="flex items-center gap-1 text-xs font-bold text-slate-500 uppercase tracking-wider h-auto p-0">
+          <Button
+            variant="ghost"
+            onClick={() => trackEvent('filter_click', { page: 'spending', type: 'allocation_filter' })}
+            className="flex items-center gap-1 text-xs font-bold text-slate-500 uppercase tracking-wider h-auto p-0"
+          >
             <Filter className="h-4 w-4" /> Filter
           </Button>
         </div>
         <div className="space-y-1">
-          <AllocationItem icon={<Utensils className="h-5 w-5" />} title="Eating Out" subtitle="Dining & Hospitality" amount={2483.40} percentage={30} color="emerald" />
-          <AllocationItem icon={<Ticket className="h-5 w-5" />} title="Entertainment" subtitle="Leisure & Media" amount={1241.70} percentage={15} color="lime" />
-          <AllocationItem icon={<Wallet className="h-5 w-5" />} title="Cash Out" subtitle="Liquidity Transfers" amount={1241.70} percentage={15} color="teal" />
+          {MOCK_SPENDING_DISTRIBUTION.slice(0, 3).map((item, idx) => (
+            <AllocationItem
+              key={item.name}
+              icon={idx === 0 ? <Landmark className="h-5 w-5" /> : idx === 1 ? <TrendingUp className="h-5 w-5" /> : <UserCheck className="h-5 w-5" />}
+              title={item.name}
+              subtitle={idx === 0 ? 'Primary Asset Allocation' : idx === 1 ? 'Growth Contributions' : 'Lifestyle Optimization'}
+              amount={item.amount}
+              percentage={item.value}
+              color={idx === 0 ? 'emerald' : idx === 1 ? 'lime' : 'teal'}
+            />
+          ))}
         </div>
       </section>
 
@@ -125,6 +139,7 @@ export default function Stats() {
           </Button>
         </div>
       </section>
+      </div>
     </div>
   );
 }

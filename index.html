@@ -1,12 +1,67 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Character Encoding and Viewport -->
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    
+    <!-- SEO Title and Description -->
+    <title>GSV AI Finance - AI-Powered Personal Finance Dashboard</title>
+    <meta name="description" content="GSV AI Finance is an AI-powered personal finance dashboard that helps you manage spending, track investments, and get intelligent financial insights. Mobile-first fintech app with real-time analytics." />
+    <meta name="keywords" content="personal finance, AI finance, budget tracker, investment dashboard, financial insights, money management" />
+    <meta name="author" content="GSV AI Finance" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#006d33" />
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gsv-ai.vercel.app" />
+    <meta property="og:title" content="GSV AI Finance - AI-Powered Personal Finance Dashboard" />
+    <meta property="og:description" content="Manage your money with AI insights. Track spending, optimize investments, and get personalized financial advice." />
+    <meta property="og:image" content="https://gsv-ai.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="GSV AI Finance" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://gsv-ai.vercel.app" />
+    <meta property="twitter:title" content="GSV AI Finance - AI-Powered Personal Finance Dashboard" />
+    <meta property="twitter:description" content="Manage your money with AI insights. Track spending, optimize investments, and get personalized financial advice." />
+    <meta property="twitter:image" content="https://gsv-ai.vercel.app/og-image.png" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://gsv-ai.vercel.app" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https: data:;" />
+    
+    <!-- Accessibility -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="GSV AI Finance" />
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💚</text></svg>" />
+    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💚</text></svg>" />
+    
+    <!-- Google Analytics 4 (Ready for activation after Vercel deployment) -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {analytics_storage: 'denied'});
+    </script>
+    <!-- GA4 script will be added here after domain verification in Google Search Console -->
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" role="main"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

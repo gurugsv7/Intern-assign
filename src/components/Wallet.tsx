@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft, MoreHorizontal, FileText, ShieldCheck, LineChart, Database, ArrowUpRight, Sparkles, Send, Paperclip } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,57 +7,71 @@ import { getFinancialInsights, AIInsight } from '@/src/services/geminiService';
 import { MOCK_USER } from '@/src/lib/mockData';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
+import { useFetch } from '@/src/hooks/useFetch';
+import { useAnalytics } from '@/src/hooks/useAnalytics';
 
 export default function Wallet() {
-  const [insights, setInsights] = useState<AIInsight[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<{ id: string; text: string; sender: 'user' | 'ai' }[]>([]);
+  const { trackEvent } = useAnalytics();
+  const {
+    data: insightsData,
+    loading,
+    error,
+    refetch,
+  } = useFetch<AIInsight[]>(() => getFinancialInsights());
+  const insights = insightsData ?? [];
 
-  useEffect(() => {
-    async function loadInsights() {
-      const data = await getFinancialInsights(MOCK_USER);
-      setInsights(data);
-      setLoading(false);
+  const handleSendMessage = () => {
+    if (message.trim()) {
+      trackEvent('assistant_message_send', {
+        length: message.trim().length,
+        page: 'assistant',
+      });
+
+      const newMessage = {
+        id: Date.now().toString(),
+        text: message,
+        sender: 'user' as const,
+      };
+      setMessages([...messages, newMessage]);
+      setMessage('');
+      
+      // Simulate AI response
+      setTimeout(() => {
+        setMessages(prev => [...prev, {
+          id: (Date.now() + 1).toString(),
+          text: "I'm analyzing your financial data...",
+          sender: 'ai' as const,
+        }]);
+      }, 500);
     }
-    loadInsights();
-  }, []);
+  };
 
   return (
-    <div className="min-h-screen bg-background pb-36">
-      {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md border-b border-emerald-900/5">
-        <div className="flex items-center justify-between px-6 py-5 w-full">
-          <Button variant="ghost" size="icon" className="text-emerald-900 rounded-full">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-emerald-900 font-semibold tracking-tight text-base uppercase tracking-[0.1em]">Fiscal AI Advisor</h1>
-          <Button variant="ghost" size="icon" className="text-emerald-900 rounded-full">
-            <MoreHorizontal className="h-5 w-5" />
-          </Button>
-        </div>
-      </header>
-
-      <div className="pt-24">
+    <div className="bg-white/50 min-h-screen text-on-surface" role="main" aria-label="AI Financial Assistant">
+      <div className="mt-4">
         {/* Hero Area */}
-        <section className="relative px-8 pt-8 pb-8 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/40 via-white to-transparent -z-10"></div>
+        <section className="relative px-8 pt-8 pb-8 overflow-hidden" aria-labelledby="assistant-title">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/40 via-white to-transparent -z-10" aria-hidden="true"></div>
           <div className="max-w-2xl mx-auto">
             <div className="flex flex-col space-y-2">
-              <span className="text-primary font-bold tracking-[0.2em] text-[10px] uppercase">BrightMoney AI</span>
-              <h2 className="text-on-background text-4xl md:text-5xl font-black tracking-tighter leading-none">
-                Hi, Alex. <br/>I'm <span className="text-primary">Fiscal</span>
+              <span className="text-primary font-bold tracking-[0.2em] text-[10px] uppercase" aria-hidden="true">AI Financial Assistant</span>
+              <h2 id="assistant-title" className="text-on-background text-4xl md:text-5xl font-black tracking-tighter leading-none">
+                Meet <span className="text-primary">Fiscal</span><br/>Your AI Strategist
               </h2>
-              <p className="text-secondary/80 text-base font-normal tracking-tight">Your bespoke financial strategist.</p>
+              <p className="text-secondary/80 text-base font-normal tracking-tight">Get personalized financial insights powered by AI.</p>
             </div>
-            <div className="mt-6 w-16 h-1 bg-gradient-to-r from-primary to-primary-container rounded-full opacity-60"></div>
+            <div className="mt-6 w-16 h-1 bg-gradient-to-r from-primary to-primary-container rounded-full opacity-60" aria-hidden="true"></div>
           </div>
         </section>
 
         {/* Suggestions */}
-        <section className="px-6 max-w-2xl mx-auto space-y-8">
+        <section className="px-6 max-w-2xl mx-auto space-y-8" aria-labelledby="suggestions-title">
           <div className="flex items-baseline justify-between">
-            <h3 className="font-extrabold text-lg tracking-tight text-on-surface">Suggestions for You</h3>
-            <div className="flex items-center gap-1.5 bg-emerald-50/50 border border-emerald-900/5 px-4 py-1.5 rounded-full">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+            <h3 id="suggestions-title" className="font-extrabold text-lg tracking-tight text-on-surface">Suggestions for You</h3>
+            <div className="flex items-center gap-1.5 bg-emerald-50/50 border border-emerald-900/5 px-4 py-1.5 rounded-full" aria-label="Live suggestions available">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true"></div>
               <span className="text-primary text-[10px] font-bold uppercase tracking-widest">Smart Actions</span>
             </div>
           </div>
@@ -89,14 +103,16 @@ export default function Wallet() {
 
             {/* Small Cards */}
             <InsightCard 
-              icon={<ShieldCheck className="h-6 w-6" />} 
+              icon={<ShieldCheck className="h-6 w-6" aria-hidden="true" />} 
               title="Emergency Fund" 
-              description="Bespoke savings path for your safety net." 
+              description="Bespoke savings path for your safety net."
+              ariaLabel="Suggestion: Emergency Fund - Get a bespoke savings path for your safety net"
             />
             <InsightCard 
-              icon={<LineChart className="h-6 w-6" />} 
+              icon={<LineChart className="h-6 w-6" aria-hidden="true" />} 
               title="Reduce Spending" 
-              description="Intelligent expense pruning & analysis." 
+              description="Intelligent expense pruning & analysis."
+              ariaLabel="Suggestion: Reduce Spending - Get intelligent expense pruning and analysis"
             />
 
             {/* Growth Engine Card */}
@@ -125,51 +141,157 @@ export default function Wallet() {
                   <Sparkles className="h-5 w-5 text-primary" />
                   <h4 className="font-bold text-[15px] tracking-tight text-on-surface uppercase tracking-widest opacity-80">Weekly Clarity</h4>
                 </div>
-                <span className="text-[10px] font-bold text-primary tracking-widest">LIVE DATA</span>
+                <span className="text-[10px] font-bold text-emerald-700 tracking-widest bg-emerald-100/80 px-3 py-1 rounded-full">LIVE DATA</span>
               </div>
-              <div className="flex items-end gap-3 h-20">
-                <div className="flex-1 bg-emerald-900/5 rounded-full h-[40%]"></div>
-                <div className="flex-1 bg-emerald-900/10 rounded-full h-[65%]"></div>
-                <div className="flex-1 bg-primary/90 rounded-full h-[95%] shadow-lg shadow-primary/20"></div>
-                <div className="flex-1 bg-emerald-900/5 rounded-full h-[50%]"></div>
-                <div className="flex-1 bg-emerald-900/10 rounded-full h-[75%]"></div>
+              
+              {/* Bar Chart */}
+              <div className="flex items-end justify-center gap-2 h-32 px-4">
+                <div className="w-14 h-14 bg-emerald-50/60 rounded-3xl border border-emerald-200/40 hover:bg-emerald-100/40 transition-colors"></div>
+                <div className="w-14 h-20 bg-emerald-100/70 rounded-3xl border border-emerald-200/50 hover:bg-emerald-100 transition-colors"></div>
+                <div className="w-16 h-32 bg-gradient-to-t from-primary to-primary/90 rounded-3xl border border-primary/20 shadow-xl shadow-primary/20 hover:shadow-2xl transition-all"></div>
+                <div className="w-14 h-16 bg-emerald-50/60 rounded-3xl border border-emerald-200/40 hover:bg-emerald-100/40 transition-colors"></div>
+                <div className="w-14 h-24 bg-emerald-100/70 rounded-3xl border border-emerald-200/50 hover:bg-emerald-100 transition-colors"></div>
               </div>
-              <div className="pt-4 border-t border-emerald-900/5">
-                <p className="text-[15px] text-secondary leading-relaxed font-normal">
-                  Alex, your net savings grew by <span className="text-primary font-bold">12.4%</span> this week. <br/>
-                  <span className="text-xs opacity-60">Should we optimize your next paycheck allocation?</span>
+
+              {/* Insight Text */}
+              <div className="pt-4 border-t border-emerald-900/5 space-y-2">
+                <p className="text-[15px] text-on-surface leading-relaxed font-medium">
+                  {MOCK_USER.name}, your net savings grew by <span className="text-primary font-black">12.4%</span> this week.
                 </p>
+                <p className="text-sm text-secondary/70 font-normal">Should we optimize your next paycheck allocation?</p>
               </div>
             </div>
           </div>
         </section>
+
+        {/* Data States: AI Insight Feed */}
+        <section className="px-6 max-w-2xl mx-auto space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-extrabold text-lg tracking-tight text-on-surface">AI Insight Feed</h3>
+            {!loading && !error && insights.length > 0 && (
+              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">
+                {insights.length} insights active
+              </span>
+            )}
+          </div>
+
+          {loading && (
+            <div className="space-y-3">
+              <div className="h-20 rounded-2xl bg-slate-100 animate-pulse"></div>
+              <div className="h-20 rounded-2xl bg-slate-100 animate-pulse"></div>
+            </div>
+          )}
+
+          {error && (
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+              <p className="text-sm text-red-700 font-semibold mb-3">Failed to load AI insights.</p>
+              <Button
+                onClick={() => refetch()}
+                className="h-auto py-2 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold uppercase tracking-widest"
+              >
+                Retry
+              </Button>
+            </div>
+          )}
+
+          {!loading && !error && insights.length === 0 && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-500">
+              No insights available right now. Try refreshing in a moment.
+            </div>
+          )}
+
+          {!loading && !error && insights.length > 0 && (
+            <div className="space-y-3">
+              {insights.slice(0, 3).map((insight) => (
+                <div key={insight.title} className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-black text-slate-900">{insight.title}</p>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">{insight.description}</p>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full whitespace-nowrap">
+                      {insight.impact}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
 
       {/* Chat Input */}
-      <div className="fixed bottom-0 left-0 w-full z-50 px-6 pb-10 pt-6 bg-white/80 backdrop-blur-2xl border-t border-emerald-900/5">
-        <div className="max-w-2xl mx-auto flex items-center gap-4">
-          <div className="flex-1 relative">
-            <Input 
-              className="w-full bg-surface-container-low/50 border-none rounded-full pl-6 pr-14 py-4 h-auto text-on-surface placeholder:text-slate-400 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all text-sm font-medium" 
-              placeholder="Ask your advisor anything..." 
-            />
-            <button className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
-              <Paperclip className="h-5 w-5" />
-            </button>
+      <div className="fixed bottom-24 left-0 w-full z-40 px-6 py-4 bg-gradient-to-t from-white via-white to-transparent backdrop-blur-xl">
+        <div className="max-w-2xl mx-auto space-y-4">
+          {/* Messages Display */}
+          {messages.length > 0 && (
+            <div className="space-y-3 mb-4 max-h-40 overflow-y-auto">
+              {messages.map((msg) => (
+                <div key={msg.id} className={cn("flex", msg.sender === 'user' ? 'justify-end' : 'justify-start')}>
+                  <div className={cn(
+                    "max-w-xs px-6 py-3 rounded-3xl text-sm font-medium",
+                    msg.sender === 'user' 
+                      ? 'bg-primary text-white rounded-br-none' 
+                      : 'bg-emerald-50 text-on-surface rounded-bl-none'
+                  )}>
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Input Area */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 relative">
+              <Input 
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                className="w-full bg-surface-container-low/60 border border-emerald-900/10 rounded-full pl-8 pr-16 py-4 h-auto text-on-surface placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-primary/40 transition-all text-base font-medium" 
+                placeholder="Ask Fiscal anything..."
+                aria-label="Chat message input"
+                role="textbox"
+                aria-multiline="false"
+              />
+              <button 
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded-full p-1"
+                aria-label="Attach file"
+              >
+                <Paperclip className="h-6 w-6" aria-hidden="true" />
+              </button>
+            </div>
+            <Button 
+              onClick={handleSendMessage}
+              className="w-14 h-14 flex items-center justify-center bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg shadow-primary/40 active:scale-95 transition-all duration-300 p-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              aria-label="Send message"
+            >
+              <Send className="h-6 w-6" aria-hidden="true" />
+            </Button>
           </div>
-          <Button className="w-14 h-14 flex items-center justify-center bg-primary text-white rounded-full shadow-2xl shadow-primary/30 active:scale-90 transition-all duration-300 p-0">
-            <Send className="h-6 w-6" />
-          </Button>
         </div>
       </div>
     </div>
   );
 }
 
-function InsightCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
+function InsightCard({ 
+  icon, 
+  title, 
+  description,
+  ariaLabel
+}: { 
+  icon: React.ReactNode
+  title: string
+  description: string
+  ariaLabel?: string
+}) {
   return (
-    <button className="col-span-1 group relative bg-white border border-emerald-900/10 rounded-4xl p-6 transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-emerald-900/5 text-left flex flex-col justify-between min-h-[220px]">
-      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+    <button 
+      className="col-span-1 group relative bg-white border border-emerald-900/10 rounded-4xl p-6 transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-emerald-900/5 text-left flex flex-col justify-between min-h-[220px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      aria-label={ariaLabel || `${title}: ${description}`}
+    >
+      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity" aria-hidden="true">
         <ShieldCheck className="h-16 w-16 font-thin" />
       </div>
       <div className="bg-primary/10 text-primary w-12 h-12 rounded-2xl flex items-center justify-center -mt-8 mb-4 border-4 border-background group-hover:bg-primary group-hover:text-white transition-all duration-300">

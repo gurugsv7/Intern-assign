@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDownLeft, Scan, Send, ArrowLeftRight, Receipt, Smartphone, Grid, ChevronRight } from 'lucide-react';
+import { ArrowDownLeft, Scan, Send, ArrowLeftRight, Receipt, Smartphone, Grid, ChevronRight, MoreVertical, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -7,11 +7,16 @@ import { MOCK_USER, MOCK_TRANSACTIONS } from '@/src/lib/mockData';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
-export default function Home() {
+interface HomeProps {
+  onOpenSend?: () => void;
+}
+
+export default function Home({ onOpenSend }: HomeProps) {
   return (
-    <div className="px-6 space-y-6 max-w-lg mx-auto pb-12">
+    <div className="bg-white/50 min-h-screen text-on-surface">
+      <div className="px-6 space-y-6 max-w-lg mx-auto">
       {/* Balance Section */}
-      <section className="text-center space-y-1 py-4">
+      <section className="text-center space-y-1 py-4 mt-4">
         <p className="text-slate-400 font-bold tracking-widest text-[10px] uppercase">Available Balance</p>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
           ${MOCK_USER.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -22,7 +27,7 @@ export default function Home() {
       <section className="grid grid-cols-3 gap-3">
         <ActionButton icon={<ArrowDownLeft className="h-5 w-5" />} label="Receive" />
         <ActionButton icon={<Scan className="h-5 w-5" />} label="Scan" primary />
-        <ActionButton icon={<Send className="h-5 w-5" />} label="Send" />
+        <ActionButton icon={<Send className="h-5 w-5" />} label="Send" onClick={onOpenSend} />
       </section>
 
       {/* Quick Services */}
@@ -46,7 +51,7 @@ export default function Home() {
             <div className="space-y-1">
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Efficiency Score</p>
               <h3 className="text-lg font-extrabold text-slate-900 leading-tight">
-                Monthly Summary <br/><span className="text-emerald-600">October</span>
+                Monthly Summary <br/><span className="text-emerald-600">April</span>
               </h3>
             </div>
             <div className="flex flex-col items-end gap-2">
@@ -94,7 +99,7 @@ export default function Home() {
                 </Avatar>
                 <div>
                   <p className="text-sm font-bold text-slate-900">{tx.name}</p>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{tx.category} • 2h ago</p>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{tx.category} • {formatTimeAgo(new Date(tx.date))}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -111,12 +116,15 @@ export default function Home() {
         </div>
       </section>
     </div>
+    </div>
   );
 }
 
-function ActionButton({ icon, label, primary }: { icon: React.ReactNode, label: string, primary?: boolean }) {
+function ActionButton({ icon, label, primary, onClick }: { icon: React.ReactNode, label: string, primary?: boolean, onClick?: () => void }) {
   return (
-    <button className={cn(
+    <button 
+      onClick={onClick}
+      className={cn(
       "flex flex-col items-center gap-2 p-3 rounded-2xl transition-all active:scale-95 group",
       primary ? "premium-gradient shadow-lg shadow-emerald-900/10" : "bg-white/60 backdrop-blur-sm border border-white shadow-sm hover:bg-emerald-50"
     )}>
@@ -143,4 +151,17 @@ function ServiceItem({ icon, label }: { icon: React.ReactNode, label: string }) 
       <span className="text-[11px] font-bold text-slate-700 uppercase tracking-tighter">{label}</span>
     </div>
   );
+}
+
+function formatTimeAgo(date: Date): string {
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  if (seconds < 60) return 'just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }
