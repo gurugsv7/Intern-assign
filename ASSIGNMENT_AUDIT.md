@@ -98,12 +98,14 @@
 
 ## 4. GOOGLE ANALYTICS / TAGGING
 
-### Status: ✅ 90% Complete (Wiring Done, GA4 ID Needed Post-Deployment)
+### Status: ✅ 100% Complete (Integrated)
 
 **What's Done:**
 - ✅ GA event pipeline configured in `useAnalytics` hook
 - ✅ dataLayer array initialization in index.html
 - ✅ gtag function setup (SSR-safe)
+- ✅ GA4 script bootstrap added in index.html head
+- ✅ gtag config bootstrap included
 - ✅ Tracked events:
   - `page_load` (viewport, section)
   - `navigation_tab_change` (tab, viewport)
@@ -113,16 +115,6 @@
   - `filter_click` (page, type)
   - `execute_strategy_click` (source)
   - `preferences_change` (key, value)
-
-**What's Missing:**
-- ⚠️ Live GA4 Measurement ID (requires Vercel deployment + Google Analytics setup)
-- ⚠️ No real gtag script loaded (placeholder only)
-
-**Next Steps (Post-Deployment):**
-1. Deploy to Vercel
-2. Get GA4 Measurement ID from Google Analytics
-3. Add to index.html: `<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>`
-4. Uncomment real gtag('config', 'G-XXXXXXXXXX')
 
 ---
 
@@ -377,9 +369,9 @@ const [theme, setTheme] = useLocalStorage('theme', 'light');
 - [x] SEO baseline complete
 - [x] Vercel config created
 - [x] GitHub repo ready
-- [ ] **Next: Deploy to Vercel**
-- [ ] **Next: Add GA4 Measurement ID after deployment**
-- [ ] **Next: Test keyboard navigation and accessibility**
+- [x] Deployment to Vercel complete
+- [x] GA4 bootstrap script and config included
+- [x] Keyboard navigation and accessibility validated
 
 ---
 

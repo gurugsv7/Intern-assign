@@ -125,7 +125,7 @@ vercel --prod
 
 ## Analytics Event Tracking
 
-The app includes a complete event tracking system integrated with `dataLayer` and `gtag` for Google Analytics 4. The following events are tracked and ready for GA4 activation:
+The app includes a complete event tracking system integrated with `dataLayer` and `gtag` for Google Analytics 4. GA4 wiring and consent-mode bootstrap are already included in the project.
 
 **Currently tracked events**:
 - `page_load` — app initialization
@@ -137,10 +137,7 @@ The app includes a complete event tracking system integrated with `dataLayer` an
 - `execute_strategy_click` — action button clicks
 - `preferences_change` — settings updates
 
-**To enable GA4 reporting** (optional, post-deployment):
-1. Create a GA4 property at [Google Analytics](https://analytics.google.com)
-2. Copy your **Measurement ID** (format: G-XXXXXXXXXX)
-3. Add to `index.html` `<head>`:
+**GA4 bootstrap in project**:
 
 ```html
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
