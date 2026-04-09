@@ -61,37 +61,35 @@ export default function Layout({ children, activeTab, setActiveTab, mainRef }: L
 
       {/* Bottom Navigation */}
       <nav 
-        className="fixed bottom-0 left-0 w-full z-50 bg-white/80 backdrop-blur-2xl border-t border-emerald-500/10 pt-3 pb-8 px-8 flex justify-center items-center gap-4" 
+        className="fixed bottom-0 left-0 w-full z-50 bg-gradient-to-t from-white via-white/95 to-white/90 backdrop-blur-xl border-t border-emerald-200/30 pt-4 pb-7 px-4 flex justify-center items-center gap-1 shadow-[0_-10px_30px_rgba(0,0,0,0.08)]" 
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="flex items-center" role="tablist">
+        <div className="flex items-center gap-3" role="tablist">
           <NavItem 
-            icon={<Home className="h-5 w-5" />} 
+            icon={<Home className="h-6 w-6" />} 
             label="Home" 
             active={activeTab === 'home'} 
             onClick={() => setActiveTab('home')}
             role="tab"
             ariaSelected={activeTab === 'home'}
           />
-          <div className="ml-2">
-            <NavItem 
-              icon={<PieChart className="h-5 w-5" />} 
-              label="Spending" 
-              active={activeTab === 'stats'} 
-              onClick={() => setActiveTab('stats')}
-              role="tab"
-              ariaSelected={activeTab === 'stats'}
-            />
-          </div>
+          <NavItem 
+            icon={<PieChart className="h-6 w-6" />} 
+            label="Spending" 
+            active={activeTab === 'stats'} 
+            onClick={() => setActiveTab('stats')}
+            role="tab"
+            ariaSelected={activeTab === 'stats'}
+          />
         </div>
 
         {/* Spacer for center FAB */}
-        <div className="w-14" aria-hidden="true" />
+        <div className="w-1" aria-hidden="true" />
 
-        <div className="flex gap-6 items-center" role="tablist">
+        <div className="flex gap-3 items-center" role="tablist">
           <NavItem 
-            icon={<Wallet className="h-5 w-5" />} 
+            icon={<Wallet className="h-6 w-6" />} 
             label="Assistant" 
             active={activeTab === 'wallet'} 
             onClick={() => setActiveTab('wallet')}
@@ -99,7 +97,7 @@ export default function Layout({ children, activeTab, setActiveTab, mainRef }: L
             ariaSelected={activeTab === 'wallet'}
           />
           <NavItem 
-            icon={<User className="h-5 w-5" />} 
+            icon={<User className="h-6 w-6" />} 
             label="Me" 
             active={activeTab === 'me'} 
             onClick={() => setActiveTab('me')}
@@ -140,12 +138,14 @@ function NavItem({
       aria-selected={ariaSelected}
       aria-label={label}
       className={cn(
-        "flex flex-col items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-2xl",
-        active ? "text-emerald-700 bg-emerald-50 rounded-2xl px-6 py-2 scale-110" : "text-slate-400 px-5 py-2 hover:text-emerald-600"
+        "flex flex-col items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-2xl px-5 py-3 gap-1.5",
+        active 
+          ? "text-emerald-600 bg-gradient-to-b from-emerald-50 to-emerald-100/70 shadow-sm rounded-xl font-semibold" 
+          : "text-slate-500 hover:text-emerald-600 hover:bg-emerald-50/50 font-medium"
       )}
     >
-      <span aria-hidden="true">{icon}</span>
-      <span className="text-[10px] font-black tracking-widest uppercase mt-1">{label}</span>
+      <span aria-hidden="true" className={cn(active && "scale-110 transition-transform")}>{icon}</span>
+      <span className="text-xs font-bold tracking-wide uppercase">{label}</span>
     </button>
   );
 }

@@ -88,11 +88,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
             {/* Card Number */}
             <div className="space-y-4">
-              <div className="flex gap-3">
-                <span className="text-2xl font-mono tracking-[0.2em] text-white/90">••••</span>
-                <span className="text-2xl font-mono tracking-[0.2em] text-white/90">••••</span>
-                <span className="text-2xl font-mono tracking-[0.2em] text-white/90">••••</span>
-                <span className="text-2xl font-mono tracking-[0.2em] text-white/90">8824</span>
+              <div className="flex gap-2">
+                <span className="text-lg font-mono tracking-[0.15em] text-white/90">••••</span>
+                <span className="text-lg font-mono tracking-[0.15em] text-white/90">••••</span>
+                <span className="text-lg font-mono tracking-[0.15em] text-white/90">••••</span>
+                <span className="text-lg font-mono tracking-[0.15em] text-white/90">8824</span>
               </div>
 
               {/* Cardholder Name and Logo */}
